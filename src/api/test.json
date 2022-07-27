@@ -1,0 +1,21 @@
+[
+  {
+    "id": 2,
+    "type": "House",
+    "name": "House 2",
+    "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet, illoat. Repudiandae ratione impedit delectus consectetur. Aspernaturvero obcaecati placeat ab distinctio unde ipsam molestias atqueratione delectus blanditiis nemo eius dignissimos doloremque quaealiquid maiores id tempore consequatur, quod pariatur saepe.",
+    "image": "https://images.pexels.com/photos/206172/pexels-photo-206172.jpeg?cs=srgb&dl=pexels-luis-yanez-206172.jpg&fm=jpg",
+    "country": "Canada",
+    "address": "798 Talbot St. Bridgewater, NJ 08807",
+    "bedrooms": "6",
+    "bathrooms": "3",
+    "surface": "4200 sq ft",
+    "year": "2016",
+    "price": "140000",
+    "agent": {
+      "image": "https://image.shutterstock.com/image-photo/image-handsome-smiling-young-african-260nw-722913181.jpg",
+      "name": "Daryl Hawker",
+      "phone": "0123 456 78910"
+    }
+  }
+]

@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply py-2 px-4 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75;
+  }
+}
+
+.btn {
+  @apply font-bold py-2 px-4 rounded
+}
+
+.btn-pri {
+   @apply bg-blue-500 text-white
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+ 
+}
+
+
+
+
+
+/* body {
+ background-image: url("../public/assets/img/bg-tablet-pattern.svg");
+ background-repeat: no-repeat;
+ background-size: 800px;
+ background-position: 90% -25%;
+} 
+#cta{
+  background-image: url("../public/assets/img/bg-simplify-section-desktop.svg");
+  background-repeat: no-repeat;
+}
+
+@media(max-width: 576px){
+  body {
+    background-size: 500px;
+    background-position: 50px -50px;
+  }
+  #cta{
+  background-image: url("../public/assets/img/bg-simplify-section-mobile.svg");
+  
+}
+} */
+
+
