@@ -10,6 +10,7 @@ import RegisterPage from "pages/Register/Register";
 import NotFoundPage from "pages/NotFound";
 import AuthGuard from "components/guards/auth";
 import ScrollPage from "pages/scroll";
+import Messager from "pages/Messager/Messager";
 
 function App() {
   return (
@@ -30,6 +31,14 @@ function App() {
             element={
               <AuthGuard>
                 <Profile />
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/messager"
+            element={
+              <AuthGuard>
+                <Messager />
               </AuthGuard>
             }
           />
