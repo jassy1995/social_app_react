@@ -1,7 +1,8 @@
 import {
   useMutation,
   useQuery,
-  // useQueryClient,
+  useQueryClient,
+  queryCache,
   useInfiniteQuery,
 } from "react-query";
 import https from "lib/https";
@@ -23,6 +24,39 @@ export const useGetUser = ({ username }) => {
   return { data, isLoading, isError, error };
 };
 
+export const useGetUserById = ({ id }) => {
+  const { data, isLoading, isError, error } = useQuery(["userById", id], () =>
+    https.get(`/user/by-id/${id}`),
+    { enabled: !!id, }
+  );
+  return { data, isLoading, isError, error };
+};
+
+export const useGetUserConversation = ({ id }) => {
+  const { data, isLoading, isError, error } = useQuery(["conversations", id], () =>
+    https.get(`/conversation/${id}`),
+    { enabled: !!id, }
+  );
+  return { data, isLoading, isError, error };
+};
+
+export const useGetUserMessage = ({ id }) => {
+  const { data, isLoading, isError, error } = useQuery(["messages", id], () =>
+    https.get(`/message/${id}`),
+    { enabled: !!id, }
+  );
+  return { data, isLoading, isError, error };
+};
+
+export const useCreateUserMessage = () => {
+  const { mutate, mutateAsync, isLoading } = useMutation((message) => {
+    return https.post("message/create", message);
+  },
+  );
+  return { mutate, mutateAsync, isLoading };
+};
+
+
 export const useFollowMutation = () => {
   const { mutate, mutateAsync, isLoading } = useMutation((id) => {
     return https.put(`user/follow/${id}`);
@@ -36,4 +70,7 @@ export const useUnFollowMutation = () => {
   });
   return { mutate, mutateAsync, isLoading };
 };
+
+
+
 

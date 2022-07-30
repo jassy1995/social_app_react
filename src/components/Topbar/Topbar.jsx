@@ -2,7 +2,7 @@ import React from "react";
 import { RiSearch2Line } from "react-icons/ri";
 import { BsFillPersonFill, BsFillChatRightTextFill } from "react-icons/bs";
 import { IoIosNotifications } from "react-icons/io";
-import { useNavigate ,Link } from "react-router-dom";
+import { useNavigate ,Link,useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import useGlobalStore from 'store/global'
 
@@ -11,6 +11,9 @@ function Topbar() {
     app_user: state.data.app_user,
     SIGNOUT: state.SIGNOUT,
   }));
+
+  const location=useLocation()
+
 let navigate = useNavigate()
   const logout=()=>{
     SIGNOUT();
@@ -21,7 +24,9 @@ let navigate = useNavigate()
   return (
     <div className="flex items-center h-[50px] bg-[#1877f2] w-[100%] sticky top-0 px-6 space-x-3 z-20">
       <div className="flex flex-1 w-[50%] font-medium text-xl text-white bg-myColor-transparent rounded-full md:capitalize md:first-letter:font-medium first-letter:text-2xl  md:first-letter:text-4xl first-letter:font-bold ml-[42px]">
-        <Link to="/">Project</Link>
+        {location.pathname==="/messager"? (<Link to="/">Home</Link>):(<Link to="/messager">Messager</Link>)}
+   
+        
       </div>
 
       <div className="flex flex-1 w-[30%] bg-white items-center px-4 h-8 rounded-full space-x-2">

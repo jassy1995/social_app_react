@@ -36,3 +36,10 @@ export const useScrollForFetching = (hasNextPage, fetchNextPage) => {
     return () => window.removeEventListener("scroll", onScroll);
   }, [hasNextPage, fetchNextPage]);
 };
+
+
+export const useScrollMessageContainer = (containerRef, messages) => {
+  useEffect(() => {
+    containerRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [containerRef, messages]);
+};
