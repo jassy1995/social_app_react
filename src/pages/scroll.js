@@ -7,8 +7,9 @@ const ScrollPage = () => {
     const [location, setLocation] = useState('')
     const [price, setPrice] = useState('')
     const { data, isSuccess, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useGetTodo({ status, location, price });
-    useScrollForFetching(hasNextPage, fetchNextPage);
+    useScrollForFetching(hasNextPage, fetchNextPage, isFetchingNextPage);
     const statusOptions = ['all', 'completed', 'not completed']
+
 
 
     const handleStatusChange = (e) => {
@@ -16,6 +17,10 @@ const ScrollPage = () => {
         setLocation('all');
         setPrice('all')
     }
+
+
+
+
 
     const FilterContainer = () => {
         return (
@@ -59,7 +64,7 @@ const ScrollPage = () => {
     const EndOfScrollMessage = () => {
         return (
             <div className="flex justify-center items-center mt-10 mb-5">
-                <h2 className='text-2xl'>Congrats! You have scrolled through all of your todo.</h2>
+                <h2 className='text-2xl'>Congrats! You have scrolled to the end of the list.</h2>
             </div>
         )
     }
@@ -84,10 +89,11 @@ const ScrollPage = () => {
         )
     }
     return (
-        <div className='max-w-5xl flex flex-col ring-1 ring-grey mx-auto mt-5  p-3 pt-10'>
+        <div className='max-w-5xl flex flex-col ring-1 ring-grey mx-auto mt-5  p-3 pt-10 '>
             <FilterContainer />
+
             {
-                isLoading ? <Loader /> : isFetchingNextPage ? <LoadMoreMessage /> : isSuccess &&
+                isLoading ? <Loader /> : isSuccess &&
                     data?.pages?.map((page) =>
                         page?.data?.todos?.map((todo, i) => (
                             <Todos key={todo.id} todo={todo} num={i + 1} />
@@ -96,7 +102,9 @@ const ScrollPage = () => {
 
 
             }
+
             {!hasNextPage && !isLoading && <EndOfScrollMessage />}
+            {isFetchingNextPage && <LoadMoreMessage />}
         </div>
     )
 }

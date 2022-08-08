@@ -1,11 +1,11 @@
-import {useState} from "react";
-import { Users } from "dummyData";
+import {useState,useEffect,useRef} from "react";
 import useGlobalStore from "store/global";
 import {Link} from "react-router-dom"
 import Online from "components/Online/Online";
 import {useGetFriendQuery,useFollowMutation ,useUnFollowMutation } from "api/chat-app/user"
 import {FaMinus} from "react-icons/fa"
 import {AiOutlinePlus} from "react-icons/ai"
+import {io} from "socket.io-client"
 
 function Rightbar({ w ,userName,userId}) {
   const {data:friends,isLoading,isError,error} = useGetFriendQuery({userName});
@@ -17,6 +17,21 @@ function Rightbar({ w ,userName,userId}) {
   const [followed,setFollowed] = useState(user?.followings?.includes(userId))
   const {  mutateAsync:followUser, } = useFollowMutation()
   const { mutateAsync:unFollowUser,  } = useUnFollowMutation()
+  const [onlineUsers,setOnlineUser] = useState([]);
+  const socket = useRef()
+  useEffect(()=>{
+    socket.current = io("ws://localhost:8900")
+  },[])
+  useEffect(()=>{
+    socket.current?.emit('addUser',user._id)
+    socket.current?.on('getUsers',(users)=>{
+      setOnlineUser(user.followings.filter((f)=>users.some((u)=>u.userId===f)))
+     
+    })
+  },[user])
+
+
+
 
 
 
@@ -48,6 +63,8 @@ function Rightbar({ w ,userName,userId}) {
     }
     setFollowed(!followed)
   };
+
+  
    
   const HomeRightBar = () => {
     return (
@@ -69,9 +86,11 @@ function Rightbar({ w ,userName,userId}) {
         />
         <h4 className="mb-3 mt-2 font-medium">Online Friends</h4>
         <ul>
-          {Users?.map((user, index) => (
-            <Online key={index} user={user} />
-          ))}
+        {(
+            onlineUsers?.map((user,i)=>(
+              <Online key={i} userId={user} />
+            ))
+          )}
         </ul>
       </>
     );
@@ -125,63 +144,6 @@ function Rightbar({ w ,userName,userId}) {
             ))
           
           )}
-          
-          {/* <div className="following flex flex-col justify-center items-center">
-            <img
-              src="/assets/person/4.jpeg"
-              alt=""
-              className="h-20 w-20 rounded-md object-cover"
-            />
-            <span>John Doe</span>
-          </div>
-          <div className="following flex flex-col justify-center items-center">
-            <img
-              src="/assets/person/3.jpeg"
-              alt=""
-              className="h-20 w-20 rounded-md object-cover"
-            />
-            <span>John Doe</span>
-          </div>
-          <div className="following flex flex-col justify-center items-center">
-            <img
-              src="/assets/person/1.jpeg"
-              alt=""
-              className="h-20 w-20 rounded-md object-cover"
-            />
-            <span>John Doe</span>
-          </div>
-          <div className="following flex flex-col justify-center items-center">
-            <img
-              src="/assets/person/1.jpeg"
-              alt=""
-              className="h-20 w-20 rounded-md object-cover"
-            />
-            <span>John Doe</span>
-          </div>
-          <div className="following flex flex-col justify-center items-center">
-            <img
-              src="/assets/person/5.jpeg"
-              alt=""
-              className="h-20 w-20 rounded-md object-cover"
-            />
-            <span>John Doe</span>
-          </div>
-          <div className="following flex flex-col justify-center items-center">
-            <img
-              src="/assets/person/7.jpeg"
-              alt=""
-              className="h-20 w-20 rounded-md object-cover"
-            />
-            <span>John Doe</span>
-          </div>
-          <div className="following flex flex-col justify-center items-center">
-            <img
-              src="/assets/person/6.jpeg"
-              alt=""
-              className="h-20 w-20 rounded-md object-cover"
-            />
-            <span>John Doe</span>
-          </div> */}
         </div>
       </>
     );

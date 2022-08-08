@@ -1,7 +1,5 @@
 import {
   useMutation,
-  useQuery,
-  // useQueryClient,
   useInfiniteQuery,
 } from "react-query";
 import https from "lib/https";
@@ -25,13 +23,11 @@ export const useGetPosts = ({ username }) => {
     isFetchingNextPage,
   } = useInfiniteQuery(["posts", username], fetchPosts, {
     getNextPageParam: (lastPage, pages) => {
-      if (pages.length < lastPage.data.total_count) {
-        return pages.length + 1;
-      } else {
-        return undefined;
-      }
+      if (!lastPage.data.end) return pages.length + 1;
+      else return undefined
     },
     enabled: !!username,
+    staleTime: 30000,
   });
 
   return {
@@ -71,7 +67,7 @@ export const useCreatePostMutation = () => {
 
 
 
-//testing infinityQuery and filter
+
 const getTodo = ({ pageParam = 1, queryKey }) => {
   const status = queryKey[1]?.status || null
   const location = queryKey[2]?.location || null

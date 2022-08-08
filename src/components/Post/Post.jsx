@@ -1,19 +1,20 @@
 import { useState ,useEffect} from "react";
 import { MdMoreVert } from "react-icons/md";
 import useGlobalStore from "store/global"
-import {useLikeDisLikeMutation} from "api/chat-app/post"
+import {useLikeDisLikeMutation} from "api/chat-app/post";
+import { timeFormatter } from "helper/timeFormatter";
 import "./Post.css";
 
 
 
 function Post({ post }) {
-  const [like, setLike] = useState(post.likes.length);
+  const [like, setLike] = useState(post.likes?.length);
   const [isLiked, setIsLike] = useState(false);
   const user = useGlobalStore((state) => state.data.app_user);
   const {mutateAsync:updateLike} = useLikeDisLikeMutation()
 
   useEffect(() => {
-    setIsLike(post.likes.includes(user._id));
+    setIsLike(post.likes?.includes(user._id));
   },[post.likes,user._id]);
 
   const handleLike = async() => {
@@ -38,7 +39,21 @@ function Post({ post }) {
             <span className="">
               {post?.userId?.username}
             </span>
-            <span className="text-slate-400 text-sm">{post?.createdAt}</span>
+            <div className="text-slate-400 text-sm"><span className="border-r- border-slate-600 pr-1">
+                        {
+                          post?.createdAt?.split(
+                            "T"
+                          )[0]
+                        }
+                      </span>{" "}
+                      <span className="pl-1 font-mono font-bold">
+                        {post?.createdAt &&
+                          timeFormatter(
+                            new Date(
+                              post.createdAt?.split(".")[0]?.replace("T"," ")
+                            )
+                          )}
+                      </span></div>
           </div>
           <div>
             <MdMoreVert />

@@ -1,4 +1,5 @@
-import React from "react";
+import React,{useRef} from "react";
+import {useScrollMessageContainer} from "Hooks/useScrollPosition"
 import {
   MdRssFeed,
   MdOutlineHelpOutline,
@@ -10,13 +11,28 @@ import {
   MdSchool,
 } from "react-icons/md";
 import { BsChatLeftTextFill } from "react-icons/bs";
-import { Users } from "dummyData";
 import "./Sidebar.css";
 import Friends from "components/Friends/Friends";
+import { useGetUsers } from 'api/chat-app/user';
+
+
 
 function Sidebar() {
+  const containerRef = useRef()
+
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useGetUsers();
+  useScrollMessageContainer(containerRef,data?.pages)
   return (
-    <div className="w-[20%] h-[calc(100vh-50px)] overflow-y-scroll sticky top-50">
+    <div className="w-[20%] h-[calc(100vh-50px)] overflow-y-scroll sticky top-50" ref={containerRef}>
       <div className="p-7">
         <ul className="flex-col space-y-4">
           <li className="flex items-center space-x-3">
@@ -56,14 +72,43 @@ function Sidebar() {
             <span>Courses</span>
           </li>
         </ul>
-        <button className="flex justify-center items-center bg-gray-200 w-[132px] mt-4">
-          show more
-        </button>
         <hr className="my-5 mx-0" />
         <ul className="flex flex-col space-y-2">
-          {Users?.map((friend, index) => (
-            <Friends key={index} friend={friend} />
-          ))}
+          {isLoading ? (
+        <h2>loading...</h2>
+        ) : isError ? (
+          <h2>{error.message}</h2> 
+        ) : isFetching && !isFetchingNextPage ? (
+          <h2>fetching...</h2>
+        ) : (
+          <>
+            {data?.pages?.map((group, i) => {
+              return (
+                <div key={i} className="mb-3">
+                  {!group?.data?.users?.length? (<h2>no user</h2>): (group?.data.users.map((friend, i) => (
+                    <Friends friend={friend} key={i} />
+                  )))}
+                </div>
+              );
+            })}
+          </>
+        )}
+
+{
+      hasNextPage && (
+        <button
+        className="flex justify-center items-center bg-gray-200 w-[132px] h-10 mt-4"
+        onClick={fetchNextPage}
+        disabled={!hasNextPage}
+      >
+         show more
+      </button>
+      )
+      
+      }
+
+      {isFetchingNextPage && <h2>loading... more user</h2>}
+    
         </ul>
       </div>
     </div>

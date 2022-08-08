@@ -1,12 +1,9 @@
 import {useLocation} from 'react-router-dom'
 import Post from "components/Post/Post";
 import Share from "components/Share/Share";
-
-// import { Posts } from "dummyData";
 import { useGetPosts } from "api/chat-app/post";
 import useGlobalStore from "store/global";
 import Loader from "components/Loader";
-
 
 
 function Feed({ w ,isCurrentUser,username}) {
@@ -55,7 +52,7 @@ function Feed({ w ,isCurrentUser,username}) {
           </>
         )}
       {
-      hasNextPage && (
+      hasNextPage  && (
         <button
         className="px-2 py-1 mt-4  ring-2 rounded-md w-32 font-bold font-[monospace]  text-blue-500 text-xl disabled:bg-slate-300 disabled:cursor-not-allowed self-center"
         onClick={fetchNextPage}
