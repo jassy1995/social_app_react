@@ -1,5 +1,7 @@
 import React,{useRef} from "react";
-import {useScrollMessageContainer} from "Hooks/useScrollPosition"
+import {useScrollMessageContainer} from "Hooks/useScrollPosition";
+import useGlobalStore from "store/global";
+import {Link} from "react-router-dom";
 import {
   MdRssFeed,
   MdOutlineHelpOutline,
@@ -13,12 +15,19 @@ import {
 import { BsChatLeftTextFill } from "react-icons/bs";
 import "./Sidebar.css";
 import Friends from "components/Friends/Friends";
-import { useGetUsers } from 'api/chat-app/user';
+import { useGetUsers,useCreateConversion } from 'api/chat-app/user';
+
+
+
+
 
 
 
 function Sidebar() {
   const containerRef = useRef()
+  const user = useGlobalStore((state) => state.data.app_user);
+  const {mutateAsync:createConversation} = useCreateConversion();
+  
 
   const {
     data,
@@ -30,7 +39,13 @@ function Sidebar() {
     fetchNextPage,
     isFetchingNextPage,
   } = useGetUsers();
-  useScrollMessageContainer(containerRef,data?.pages)
+  useScrollMessageContainer(containerRef,data?.pages);
+
+  const createNewConversation=async(id)=>{
+    await createConversation({senderId:user?._id,receiverId:id})
+  }
+
+  
   return (
     <div className="w-[20%] h-[calc(100vh-50px)] overflow-y-scroll sticky top-50" ref={containerRef}>
       <div className="p-7">
@@ -39,10 +54,12 @@ function Sidebar() {
             <MdRssFeed />
             <span>Feed</span>
           </li>
+          <Link to='/messager' className="flex items-center space-x-3">
           <li className="flex items-center space-x-3">
             <BsChatLeftTextFill />
-            <span>Chat</span>
+            <span>Chat Now</span>
           </li>
+          </Link>
           <li className="flex items-center space-x-3">
             <MdPlayCircle />
             <span>Video</span>
@@ -86,7 +103,9 @@ function Sidebar() {
               return (
                 <div key={i} className="mb-3">
                   {!group?.data?.users?.length? (<h2>no user</h2>): (group?.data.users.map((friend, i) => (
-                    <Friends friend={friend} key={i} />
+                    <Link to={`/profile/${friend.username}`} key={i} onClick={() =>createNewConversation(friend._id)}>
+                      <Friends friend={friend} key={i} />
+                    </Link>
                   )))}
                 </div>
               );

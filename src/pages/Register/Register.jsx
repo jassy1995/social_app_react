@@ -48,7 +48,7 @@ const Register = () => {
     const body= {username:username.trim(),email: email.trim(), password: password.trim() };
     console.log(body);
         try {
-          const {data} = await axios.post("http://localhost:4100/api/auth/register",body)
+          const {data} = await axios.post("https://social-app-serverx.herokuapp.com/api/auth/register",body)
             setIsLoading(false);
             SIGNIN(data)
             if (data?.status) {

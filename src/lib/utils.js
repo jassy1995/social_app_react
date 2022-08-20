@@ -1,3 +1,4 @@
+
 export const formatCurrency = (value) => {
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
@@ -18,3 +19,5 @@ export const errorHandler = function (error) {
     ? error.response.data.message
     : error.message;
 };
+
+

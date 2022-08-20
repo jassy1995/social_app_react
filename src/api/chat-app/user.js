@@ -75,6 +75,14 @@ export const useGetUserConversation = ({ id }) => {
   return { data, isLoading, isError, error };
 };
 
+export const useCreateConversion = () => {
+  const { mutate, mutateAsync, isLoading } = useMutation((payload) => {
+    return https.post("conversation/create", payload);
+  },
+  );
+  return { mutate, mutateAsync, isLoading };
+};
+
 export const useGetUserMessage = ({ id }) => {
   const { data, isLoading, isError, error } = useQuery(["messages", id], () =>
     https.get(`/message/${id}`),

@@ -34,7 +34,7 @@ const Messager = () => {
       text:newMessage,
       conversationId:currentChat?._id,
     }
-    const receiverId = currentChat?.members.find(member => member !== currentUser._id)
+    const receiverId = currentChat?.members?.find(member => member !== currentUser._id)
     socket.current.emit("sendMessage",{
       senderId:currentUser?._id,
       receiverId,
@@ -71,8 +71,9 @@ const Messager = () => {
 
   
   useEffect(()=>{
-    socket.current = io("ws://localhost:8900")
-    socket.current.on('getMessage',(data)=>{
+    // socket.current = io("ws://localhost:8900")
+    socket.current = io("https://social-app-socketx.herokuapp.com")
+    socket?.current.on('getMessage',(data)=>{
       setArrivalMessage({
         sender:data.senderId,
         text:data.text,
@@ -94,6 +95,7 @@ const Messager = () => {
       setOnlineUser(currentUser.followings.filter((f)=>users.some((u)=>u.userId===f)))
      
     })
+    return(() => socket.current.close());
   },[currentUser])
 
 
@@ -142,7 +144,7 @@ const Messager = () => {
         </div>
       </>
       )
-      : (<span className="absolute top-[30%] text-[50px] text-slate-300  italic">open a conversation to start a chat</span>)
+      : (<span className="absolute top-[30%] text-[50px] text-slate-300  italic">click on your prefer user to start the conversation</span>)
       }
         
     </div>  

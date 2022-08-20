@@ -1,8 +1,8 @@
-import { format } from 'timeago.js';
 
-
+import ReactTimeAgo from 'react-time-ago'
 
 const Message = ({message,own}) => {
+
   return (
     <div className={`message flex flex-col mt-3 ${own?'items-end':''}`}>
         <div className="messageTop flex space-x-2">
@@ -10,7 +10,7 @@ const Message = ({message,own}) => {
             <p className={`p-3 text-sm rounded-[30px]  text-white max-w-[300px] ${own?'bg-[rgb(245,241,241)] text-black':'bg-[#1877f2]'}`}>{message?.text}</p>
         </div>
         <div className="messageBottom text-[12px] mt-[10px]">
-            {format(message?.createdAt)}
+           <ReactTimeAgo date={message?.createdAt} locale="en-US"/>
         </div>
     </div>
   )

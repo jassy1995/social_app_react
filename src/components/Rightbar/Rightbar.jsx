@@ -2,10 +2,11 @@ import {useState,useEffect,useRef} from "react";
 import useGlobalStore from "store/global";
 import {Link} from "react-router-dom"
 import Online from "components/Online/Online";
-import {useGetFriendQuery,useFollowMutation ,useUnFollowMutation } from "api/chat-app/user"
+import {useGetFriendQuery,useFollowMutation ,useUnFollowMutation,useCreateConversion  } from "api/chat-app/user";
 import {FaMinus} from "react-icons/fa"
 import {AiOutlinePlus} from "react-icons/ai"
 import {io} from "socket.io-client"
+import { toast } from "react-toastify"
 
 function Rightbar({ w ,userName,userId}) {
   const {data:friends,isLoading,isError,error} = useGetFriendQuery({userName});
@@ -17,51 +18,68 @@ function Rightbar({ w ,userName,userId}) {
   const [followed,setFollowed] = useState(user?.followings?.includes(userId))
   const {  mutateAsync:followUser, } = useFollowMutation()
   const { mutateAsync:unFollowUser,  } = useUnFollowMutation()
+  const {mutateAsync:createConversation} = useCreateConversion();
   const [onlineUsers,setOnlineUser] = useState([]);
   const socket = useRef()
   useEffect(()=>{
-    socket.current = io("ws://localhost:8900")
+    // socket.current = io("ws://localhost:8900"); //localhost connection
+    socket.current = io("https://social-app-socketx.herokuapp.com");
   },[])
+
+
   useEffect(()=>{
-    socket.current?.emit('addUser',user._id)
-    socket.current?.on('getUsers',(users)=>{
-      setOnlineUser(user.followings.filter((f)=>users.some((u)=>u.userId===f)))
-     
-    })
+    if(socket){
+      socket.current.emit('addUser',user._id)
+      socket.current.on('getUsers',(users)=>{
+        setOnlineUser(user.followings.filter((f)=>users.some((u)=>u.userId===f)))
+       
+      })
+    }
+    return(() => socket.current.close());
   },[user])
 
-
-
+  const createNewConversation=async(id)=>{
+    await createConversation({senderId:user?._id,receiverId:id}).then((result)=>{
+      if(result?.data?.message === 'created'){
+        toast.success("conversation created successfully");
+      }
+    })
+  }
 
 
 
   const handleClick = async() => {
-    if(followed){
-      await unFollowUser(userId);
-      removeFollower(userId)
-      const getUser =  localStorage.getItem("app_user")
-      && JSON.parse(localStorage.getItem("app_user"));
-
-      const newFollowings = getUser.followings.filter(x=>x._id !== userId)
-      getUser['followings'] = newFollowings;
-      localStorage.setItem(
-        "app_user",
-        JSON.stringify(getUser)
-      );
-      
-    }else{
-      await followUser(userId)
-      addFollower(userId);
-      const getUser =  localStorage.getItem("app_user")
-      && JSON.parse(localStorage.getItem("app_user"));
-      const newFollowings = [...getUser.followings,userId]
-      getUser['followings'] = newFollowings;
-      localStorage.setItem(
-        "app_user",
-        JSON.stringify(getUser)
-      );
+    try {
+      if(followed){
+        await unFollowUser(userId);
+        removeFollower(userId)
+        const getUser =  localStorage.getItem("app_user")
+        && JSON.parse(localStorage.getItem("app_user"));
+  
+        const newFollowings = getUser.followings.filter(x=>x._id !== userId)
+        getUser['followings'] = newFollowings;
+        localStorage.setItem(
+          "app_user",
+          JSON.stringify(getUser)
+        );
+        
+      }else{
+        await followUser(userId)
+        addFollower(userId);
+        const getUser =  localStorage.getItem("app_user")
+        && JSON.parse(localStorage.getItem("app_user"));
+        const newFollowings = [...getUser.followings,userId]
+        getUser['followings'] = newFollowings;
+        localStorage.setItem(
+          "app_user",
+          JSON.stringify(getUser)
+        );
+      }
+      setFollowed(!followed)
+    } catch (error) {
+      console.log(error);
     }
-    setFollowed(!followed)
+    
   };
 
   
@@ -87,8 +105,10 @@ function Rightbar({ w ,userName,userId}) {
         <h4 className="mb-3 mt-2 font-medium">Online Friends</h4>
         <ul>
         {(
-            onlineUsers?.map((user,i)=>(
-              <Online key={i} userId={user} />
+            onlineUsers?.map((id,i)=>(
+              <Link to='/messager' key={i} onClick={() =>createNewConversation(id)}>
+                <Online key={i} userId={id} />
+              </Link>
             ))
           )}
         </ul>
